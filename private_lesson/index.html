@@ -237,19 +237,14 @@
   <article>
     <style>
   form {
-    max-width: 600px;
     margin: 0;
     padding: 1em;
-    background: #f9f9f9;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   form p {
     margin-bottom: 1em;
   }
   form label {
     margin-bottom: .5em;
-    color: #333333;
     display: block;
   }
   form input[type="text"],
@@ -278,30 +273,42 @@
   }
 </style>
 
-<form name="tutor-request" method="POST" data-netlify="true" netlify="">
-  <p><label>Adınız: <input type="text" name="name" required=""></label></p>
-  <p><label>Telefon Numaranız: <input type="tel" name="phone" required=""></label></p>
+<form id="private_request" method="POST" action="https://formspree.io/f/mbjnellj">
   <p>
-    <label>Tercih edilen iletişim kanalı:</label><br>
+  <label>Adınız:</label>
+  <input type="text" name="name" required="">
+  </p>
+
+  <p>
+  <label>Telefon Numaranız</label>
+  <input type="tel" id="phoneNumber" name="phoneNumber" required="">
+  </p>
+
+  <p>
+    <label>Tercih edilen iletişim kanalı:</label>
     <input type="radio" name="contact-method" value="whatsapp" required=""> WhatsApp<br>
     <input type="radio" name="contact-method" value="call"> Arama
   </p>
+
   <p>
-    <label>Özel Ders Tercihi:</label><br>
+    <label>Özel Ders Tercihi:</label>
     <input type="radio" name="tutoring-preference" value="online" required=""> Online<br>
-    <input type="radio" name="tutoring-preference" value="face-to-face"> Yüz yüze
+    <input type="radio" name="tutoring-preference" value="face-to-face"> Yüz Yüze
   </p>
+
   <p>
-    <label>Ders Konusu:</label><br>
+    <label>Ders Konusu:</label>
     <input type="radio" name="lesson-subject" value="chemistry" required=""> Kimya<br>
     <input type="radio" name="lesson-subject" value="mathematics"> Matematik
   </p>
+
   <p>
     <label>Öğrencinin Güncel Sınıfı:</label>
     <select name="current-grade" required="">
       <option value="">-- Sınıf Seçin --</option>
     </select>
   </p>
+
   <p>
     <label>Öğrencinin Müfredatı:</label>
     <select name="curriculum" required="">
@@ -309,18 +316,18 @@
       <option value="MEB">MEB</option>
       <option value="IB">IB</option>
       <option value="AP">AP</option>
-      <option value="Other">Diğer</option>
+      <option value="Other">Other</option>
     </select>
   </p>
-  <p>
-    <label>Mesajınız:</label>
-    <input type="text" name="message" value="message">
-  </p>
-
 
   <p>
-    <button type="submit">Gönder</button>
+    <label>Mesajınız: <input type="text" name="message"></label>
   </p>
+
+  <input type="hidden" name="Request Page" value="Turkish">
+
+  <p><button type="submit">Gönder</button></p>
+  <div id="formResponse"></div>
 </form>
 
 <script>
@@ -354,6 +361,41 @@
       }
     });
   });
+</script>
+
+<script>
+    document.getElementById('private_request').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        var form = event.target;
+        var formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const formResponse = document.getElementById('formResponse');
+
+            if (response.ok) {
+                formResponse.innerText = 'Mesajınız için teşekkürler!';
+                formResponse.style.color = 'green';
+                form.reset(); // Clear the form
+            } else {
+                const errorData = await response.json();
+                formResponse.innerText = errorData.errors ? errorData.errors.map(error => error.message).join(", ") : 'Formunuzu gönderirken bir sorun oluştu.';
+                formResponse.style.color = 'red';
+            }
+        } catch (error) {
+            const formResponse = document.getElementById('formResponse');
+            formResponse.innerText = 'Formunuzu gönderirken bir sorun oluştu.';
+            formResponse.style.color = 'red';
+        }
+    });
 </script>
 
 

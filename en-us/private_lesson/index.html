@@ -235,19 +235,14 @@
   <article>
     <style>
   form {
-    max-width: 600px;
     margin: 0;
     padding: 1em;
-    background: #f9f9f9;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   form p {
     margin-bottom: 1em;
   }
   form label {
     margin-bottom: .5em;
-    color: #333333;
     display: block;
   }
   form input[type="text"],
@@ -276,30 +271,42 @@
   }
 </style>
 
-<form name="tutor-request" method="POST" data-netlify="true" netlify="">
-  <p><label>Your Name: <input type="text" name="name" required=""></label></p>
-  <p><label>Your Phone Number: <input type="tel" name="phone" required=""></label></p>
+<form id="private_request" method="POST" action="https://formspree.io/f/mbjnellj">
   <p>
-    <label>Preferred Contact Method:</label><br>
+  <label>Your Name:</label>
+  <input type="text" name="name" required="">
+  </p>
+
+  <p>
+  <label>Your Phone Number:</label>
+  <input type="tel" id="phoneNumber" name="phoneNumber" required="">
+  </p>
+
+  <p>
+    <label>Preferred Contact Method:</label>
     <input type="radio" name="contact-method" value="whatsapp" required=""> WhatsApp<br>
     <input type="radio" name="contact-method" value="call"> Call
   </p>
+
   <p>
-    <label>Tutoring Preference:</label><br>
+    <label>Tutoring Preference:</label>
     <input type="radio" name="tutoring-preference" value="online" required=""> Online<br>
     <input type="radio" name="tutoring-preference" value="face-to-face"> Face-to-Face
   </p>
+
   <p>
-    <label>Lesson Subject:</label><br>
+    <label>Lesson Subject:</label>
     <input type="radio" name="lesson-subject" value="chemistry" required=""> Chemistry<br>
     <input type="radio" name="lesson-subject" value="mathematics"> Mathematics
   </p>
+
   <p>
     <label>Student's Current Grade:</label>
     <select name="current-grade" required="">
       <option value="">-- Select Grade --</option>
     </select>
   </p>
+
   <p>
     <label>Student's Curriculum:</label>
     <select name="curriculum" required="">
@@ -310,15 +317,14 @@
       <option value="Other">Other</option>
     </select>
   </p>
-  <p>
-    <label>Your Message:</label>
-    <input type="text" name="message" value="message">
-  </p>
-
 
   <p>
-    <button type="submit">Send</button>
+    <label>Your Message: <input type="text" name="message"></label>
   </p>
+
+  <input type="hidden" name="Request Page" value="English">
+  <p><button type="submit">Send</button></p>
+  <div id="formResponse"></div>
 </form>
 
 <script>
@@ -352,6 +358,41 @@
       }
     });
   });
+</script>
+
+<script>
+    document.getElementById('private_request').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        var form = event.target;
+        var formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const formResponse = document.getElementById('formResponse');
+
+            if (response.ok) {
+                formResponse.innerText = 'Thanks for your message!';
+                formResponse.style.color = 'green';
+                form.reset(); // Clear the form
+            } else {
+                const errorData = await response.json();
+                formResponse.innerText = errorData.errors ? errorData.errors.map(error => error.message).join(", ") : 'Oops! There was a problem submitting your form';
+                formResponse.style.color = 'red';
+            }
+        } catch (error) {
+            const formResponse = document.getElementById('formResponse');
+            formResponse.innerText = 'Oops! There was a problem submitting your form';
+            formResponse.style.color = 'red';
+        }
+    });
 </script>
 
 
