@@ -20,12 +20,12 @@
 <title>
   
     
-      Private Lesson | Sezen Topuz
+      Özel Ders | Sezen Topuz
     
   
 </title>
 <meta name="author" content="Sezen Topuz">
-<meta name="description" content="To request a private lesson, please complete the form provided.">
+<meta name="description" content="Özel ders talep etmek için lütfen formu doldurun.">
 
   <meta name="keywords" content="chemistry">
 
@@ -166,7 +166,7 @@
               
                 <li class="nav-item active">
                   
-                  <a class="nav-link" href="/private_lesson/">Private Lesson
+                  <a class="nav-link" href="/private_lesson/">Özel Ders
                     
                       <span class="sr-only">(current)</span>
                     
@@ -230,8 +230,8 @@
       
         <div class="post">
   <header class="post-header">
-    <h1 class="post-title">Private Lesson</h1>
-    <p class="post-description">To request a private lesson, please complete the form provided.</p>
+    <h1 class="post-title">Özel Ders</h1>
+    <p class="post-description">Özel ders talep etmek için lütfen formu doldurun.</p>
   </header>
 
   <article>
@@ -279,41 +279,47 @@
 </style>
 
 <form name="tutor-request" method="POST" data-netlify="true" netlify="">
-  <p><label>Your Name: <input type="text" name="name" required=""></label></p>
-  <p><label>Your Phone Number: <input type="tel" name="phone" required=""></label></p>
+  <p><label>Adınız: <input type="text" name="name" required=""></label></p>
+  <p><label>Telefon Numaranız: <input type="tel" name="phone" required=""></label></p>
   <p>
-    <label>Preferred Contact Method:</label><br>
+    <label>Tercih edilen iletişim kanalı:</label><br>
     <input type="radio" name="contact-method" value="whatsapp" required=""> WhatsApp<br>
-    <input type="radio" name="contact-method" value="call"> Call
+    <input type="radio" name="contact-method" value="call"> Arama
   </p>
   <p>
-    <label>Tutoring Preference:</label><br>
+    <label>Özel Ders Tercihi:</label><br>
     <input type="radio" name="tutoring-preference" value="online" required=""> Online<br>
-    <input type="radio" name="tutoring-preference" value="face-to-face"> Face-to-Face
+    <input type="radio" name="tutoring-preference" value="face-to-face"> Yüz yüze
   </p>
   <p>
-    <label>Lesson Subject:</label><br>
-    <input type="radio" name="lesson-subject" value="chemistry" required=""> Chemistry<br>
-    <input type="radio" name="lesson-subject" value="mathematics"> Mathematics
+    <label>Ders Konusu:</label><br>
+    <input type="radio" name="lesson-subject" value="chemistry" required=""> Kimya<br>
+    <input type="radio" name="lesson-subject" value="mathematics"> Matematik
   </p>
   <p>
-    <label>Student's Current Grade:</label>
+    <label>Öğrencinin Güncel Sınıfı:</label>
     <select name="current-grade" required="">
-      <option value="">-- Select Grade --</option>
+      <option value="">-- Sınıf Seçin --</option>
     </select>
   </p>
   <p>
-    <label>Student's Curriculum:</label>
+    <label>Öğrencinin Müfredatı:</label>
     <select name="curriculum" required="">
-      <option value="">-- Select Curriculum --</option>
+      <option value="">-- Müfredat Seçin --</option>
+      <option value="MEB">MEB</option>
       <option value="IB">IB</option>
       <option value="AP">AP</option>
-      <option value="MEB">MEB</option>
-      <option value="Other">Other</option>
+      <option value="Other">Diğer</option>
     </select>
   </p>
   <p>
-    <button type="submit">Send</button>
+    <label>Mesajınız:</label>
+    <input type="text" id="message" name="message">
+  </p>
+
+
+  <p>
+    <button type="submit">Gönder</button>
   </p>
 </form>
 
@@ -322,7 +328,7 @@
   const currentGradeSelect = document.querySelector('select[name="current-grade"]');
 
   function populateGradeOptions(subject) {
-    currentGradeSelect.innerHTML = '<option value="">-- Select Grade --</option>';
+    currentGradeSelect.innerHTML = '<option value="">-- Sınıf Seçin --</option>';
 
     let startGrade, endGrade;
     if (subject === 'mathematics') {
@@ -336,7 +342,7 @@
     for (let i = startGrade; i <= endGrade; i++) {
       const option = document.createElement('option');
       option.value = i;
-      option.textContent = `${i}th Grade`;
+      option.textContent = `${i}. Sınıf`;
       currentGradeSelect.appendChild(option);
     }
   }
