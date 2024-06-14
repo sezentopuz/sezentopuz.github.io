@@ -269,6 +269,17 @@
   form button:hover {
     background-color: #0056b3;
   }
+ #calculatedFee {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid;
+      border-radius: 5px;
+    }
+
+
+
 </style>
 
 <form id="private_request" method="POST" action="https://formspree.io/f/mbjnellj">
@@ -311,10 +322,6 @@
     <label>Student's Curriculum:</label>
     <select name="curriculum" required="">
       <option value="">-- Select Curriculum --</option>
-      <option value="IB">IB</option>
-      <option value="AP">AP</option>
-      <option value="MEB">MEB</option>
-      <option value="Other">Other</option>
     </select>
   </p>
 
@@ -323,13 +330,17 @@
   </p>
 
   <input type="hidden" name="Request Page" value="English">
+
+  <p id="calculatedFee">Enter details to get estimated price.‎</p>
   <p><button type="submit">Send</button></p>
   <div id="formResponse"></div>
+
 </form>
 
 <script>
   const subjectRadios = document.querySelectorAll('input[name="lesson-subject"]');
   const currentGradeSelect = document.querySelector('select[name="current-grade"]');
+  const curriculumSelect = document.querySelector('select[name="curriculum"]');
 
   function populateGradeOptions(subject) {
     currentGradeSelect.innerHTML = '<option value="">-- Select Grade --</option>';
@@ -351,10 +362,31 @@
     }
   }
 
+  function populateCurriculumOptions(subject) {
+    curriculumSelect.innerHTML = '<option value="">-- Select Curriculum --</option>';
+
+    if (subject === 'chemistry') {
+      curriculumSelect.innerHTML += `
+        <option value="MEB">MEB</option>
+        <option value="AP">AP</option>
+        <option value="CIE">CIE</option>
+        <option value="IB">IB</option>
+        <option value="Other">Other</option>
+
+        `;
+    } else if (subject === 'mathematics') {
+      curriculumSelect.innerHTML += `
+        <option value="MEB" selected>MEB</option>
+        <option value="Other">Other</option>
+      `;
+    }
+  }
+
   subjectRadios.forEach(radio => {
     radio.addEventListener('change', () => {
       if (radio.checked) {
         populateGradeOptions(radio.value);
+        populateCurriculumOptions(radio.value);
       }
     });
   });
@@ -393,6 +425,42 @@
             formResponse.style.color = 'red';
         }
     });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('private_request');
+    const feeDisplay = document.getElementById('calculatedFee');
+    const conversionRate = 0.031059119; // Fixed conversion rate from TRY to USD
+
+    const calculateFee = () => {
+      let fee_min = 400;
+      let fee_max = 1000;
+
+      const tpElement = form.querySelector('input[name="tutoring-preference"]:checked');
+      const cuElement = form.querySelector('select[name="curriculum"]');
+      const tp = tpElement ? tpElement.value : null;
+      const cu = cuElement ? cuElement.value : null;
+
+      if (tp === 'face-to-face') {fee_min += 200} // 600-800
+      if (tp === 'online') {fee_max -= 200} // 400-800
+
+      if (cu === 'CIE') {fee_min += 200;fee_max -= 200;}
+      if (cu === 'AP') {fee_min += 200;fee_max -= 200;}
+      if (cu === 'IB') {fee_min += 100;fee_max -= 300;}
+      if (cu === 'MEB') {fee_min += 0;fee_max -= 400;} // min remove -400
+
+      const fee_min_usd = (fee_min * conversionRate).toFixed(0);
+      const fee_max_usd = (fee_max * conversionRate).toFixed(0);
+
+      if (fee_min === fee_max) {
+        feeDisplay.textContent = `Estimated price for one lesson: ${fee_min}₺ (approx. $${fee_min_usd})`;
+      } else {
+        feeDisplay.textContent = `Estimated price for one lesson: ${fee_min}₺‎-${fee_max}₺ (approx. $${fee_min_usd}-$${fee_max_usd})`;
+      }
+    };
+    form.addEventListener('change', calculateFee);
+  });
 </script>
 
 
